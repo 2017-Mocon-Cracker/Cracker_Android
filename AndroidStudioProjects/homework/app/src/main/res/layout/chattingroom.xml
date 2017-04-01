@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_chat"
+    android:orientation="vertical"
+    android:background="@color/talk"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:background="#dca709"
+        android:titleTextColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
+    </android.support.v7.widget.Toolbar>
+
+    <ListView
+        android:id="@+id/chatting_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </ListView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/chatroompl"
+            android:cropToPadding="true"
+            android:padding="7dp"/>
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/chatting_text"
+            android:layout_width="0dp"
+            android:layout_height="37dp"
+            android:hint="채팅"
+            android:textSize="15sp"
+            android:textColor="#000000"
+            android:background="#ffffff"/>
+        <Button
+            android:text="전송"
+            android:textColor="@color/colorPrimary"
+            android:background="@color/yellow"
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+</LinearLayout>

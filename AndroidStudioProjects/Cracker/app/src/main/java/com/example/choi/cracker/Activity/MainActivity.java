@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.choi.cracker.Network.NetworkHelper;
 import com.example.choi.cracker.R;
@@ -16,6 +18,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
 
 import java.util.Arrays;
 
@@ -25,6 +28,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = null;
+    TextView textView;
+    String User_name;
+    User user;
     Button login;
     //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
+        loadNowData();
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -61,9 +68,13 @@ public class MainActivity extends AppCompatActivity {
                 access.enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
-                        switch (response.code()){
+                        switch (response.code()) {
                             case 200:
-                                Log.e("asdf", response.body().getName());
+                                Log.e("asdf", response.body().getUserName());
+                                User user_ = response.body();
+                                user = new User(user_.getEmail(),user_.getCardName(),user_.getUserName(),user_.getMoney(),user_.getCardNum());
+                                Log.d("main_user",""+user);
+                                saveNowData();
                                 break;
                             case 400:
                                 break;
@@ -88,6 +99,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("LoginErr", error.toString());
             }
         });
+
+        textView = (TextView) findViewById(R.id.add_card);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveNowData();
+                Intent intent = new Intent(MainActivity.this, Add_CardInfo.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -105,6 +126,18 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putBoolean("isFirstRun", false).apply();
         }
     }
+    void saveNowData() { //items 안의 내용이 저장됨
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        String json = new Gson().toJson(user);
+        editor.putString("add_card_name", json);
+        editor.commit();
+    }
 
-
+    void loadNowData() {
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        User_name = pref.getString("add_card_name", null);
+        user = new Gson().fromJson(User_name, User.class);
+        Log.d("asdasd",""+user);
+    }
 }

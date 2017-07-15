@@ -5,46 +5,65 @@ package com.example.choi.cracker.data;
  */
 
 public class User {
-    int id;
-    String name,email,auth_token;
+//    "_id": "596a0494a3c669082bb7bf7c",
+//            "Money": 1000,
+//            "CardNum": null,
+//            "Email": "fluorine2015@gmail.com",
+//            "CardName": "",
+//            "UserName": "오준석",
+//            "isEmpty": 0,
+//            "Paied": 0,
+//            "isTransfer": 0,
+//            "__v": 0
 
-    User(int id, String name, String email, String auth_token){
-        this.name = name;
-        this.id = id;
-        this.email = email;
-        this.auth_token = auth_token;
-    }
+    private String Email, CardName, UserName;
+    private int Money, CardNum;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public User(String email, String cardName, String userName, int money, int cardNum) {
+        Email = email;
+        CardName = cardName;
+        UserName = userName;
+        Money = money;
+        CardNum = cardNum;
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        Email = email;
     }
 
-    public String getAuth_token() {
-        return auth_token;
+    public String getCardName() {
+        return CardName;
     }
 
-    public void setAuth_token(String auth_token) {
-        this.auth_token = auth_token;
+    public void setCardName(String cardName) {
+        CardName = cardName;
     }
 
-    public int getId() {
-
-        return id;
+    public String getUserName() {
+        return UserName;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public int getMoney() {
+        return Money;
+    }
+
+    public void setMoney(int money) {
+        Money = money;
+    }
+
+    public int getCardNum() {
+        return CardNum;
+    }
+
+    public void setCardNum(int cardNum) {
+        CardNum = cardNum;
     }
 }

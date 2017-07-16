@@ -14,11 +14,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.choi.cracker.Network.NetworkHelper;
 import com.example.choi.cracker.R;
 import com.example.choi.cracker.Data.User;
 import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by choi on 2017. 7. 15..
@@ -62,6 +67,22 @@ public class AddCardInfo extends AppCompatActivity {
                     saveNowData();
                     Log.d("user",user.getCardNum().toString());
                     setResult(RESULT_OK);
+//                    String email, String cardName, String userName, String cardNum, int money, int paied, Boolean isTransfer
+//                    Call<User> access = NetworkHelper.getNetworkInstance().facebookLogin(loginResult.getAccessToken().getToken());
+                    String json = new Gson().toJson(user);
+                    Log.d("json",json);
+                    Call<User> access = NetworkHelper.getNetworkInstance().cardInfo(json);
+                    access.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            Log.d("asd",""+response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+                            Log.d("fail",t.getMessage());
+                        }
+                    });
                     finish();
                 }
             }
@@ -100,6 +121,7 @@ public class AddCardInfo extends AppCompatActivity {
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT);
         actionBar.setCustomView(mCustomView,params);
     }
+
     String cardNum(){
         String cardNum;
         cardNum = cardNumber1.getText().toString() + "-"

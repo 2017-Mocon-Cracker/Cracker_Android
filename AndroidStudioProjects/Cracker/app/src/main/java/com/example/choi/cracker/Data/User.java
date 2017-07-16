@@ -18,13 +18,42 @@ public class User {
 
     private String Email, CardName, UserName, CardNum;
     private int Money;
+    private Boolean isTransfer,isEmpty, Paied;
 
-    public User(String email, String cardName, String userName, int money, String cardNum) {
+    public Boolean getEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(Boolean empty) {
+        isEmpty = empty;
+    }
+
+    public User(String email, String cardName, String userName, String cardNum, int money, Boolean paied, Boolean isTransfer, Boolean isEmpty) {
         Email = email;
         CardName = cardName;
         UserName = userName;
-        Money = money;
         CardNum = cardNum;
+        Money = money;
+
+        Paied = paied;
+        this.isTransfer = isTransfer;
+        this.isEmpty = isEmpty;
+    }
+
+    public Boolean getPaied() {
+        return Paied;
+    }
+
+    public void setPaied(Boolean paied) {
+        Paied = paied;
+    }
+
+    public Boolean getTransfer() {
+        return isTransfer;
+    }
+
+    public void setTransfer(Boolean transfer) {
+        isTransfer = transfer;
     }
 
     public String getEmail() {

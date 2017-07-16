@@ -12,11 +12,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.choi.cracker.Network.NetworkHelper;
 import com.example.choi.cracker.R;
 import com.example.choi.cracker.Data.User;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
+
+import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = null;
@@ -39,47 +50,53 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-//        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-//        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(final LoginResult loginResult) {
-//                Log.e("asdf", loginResult.getAccessToken().getToken());
-//                Call<User> access = NetworkHelper.getNetworkInstance().facebookLogin(loginResult.getAccessToken().getToken());
-//                access.enqueue(new Callback<User>() {
-//                    @Override
-//                    public void onResponse(Call<User> call, Response<User> response) {
-//                        switch (response.code()) {
-//                            case 200:
-//                                Log.e("asdf", response.body().getUserName());
-//                                User user_ = response.body();
-//                                user = new User(user_.getEmail(),user_.getCardName(),user_.getUserName(),user_.getMoney(),user_.getCardNum());
-//                                Log.d("main_user",""+user);
-//                                saveNowData();
-//                                break;
-//                            case 400:
-//                                break;
-//                        }
-//                    }
-//
-//
-//                    @Override
-//                    public void onFailure(Call<User> call, Throwable t) {
-//                        Log.e("asdf", t.getMessage());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//
-//            }
-//
-//            @Override
-//            public void onError(FacebookException error) {
-//                Log.e("LoginErr", error.toString());
-//            }
-//        });
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(final LoginResult loginResult) {
+                Log.e("asdf", loginResult.getAccessToken().getToken());
+                Call<User> access = NetworkHelper.getNetworkInstance().facebookLogin(loginResult.getAccessToken().getToken());
+                access.enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        Log.d("asd",response.code()+"");
+                        switch (response.code()) {
+                            case 200:
+                                Log.e("asdf", response.body().getUserName());
+                                User user_ = response.body();
+//                                String email, String cardName, String userName, String cardNum, int money, int paied, Boolean isTransfer
+                                user = new User(user_.getEmail(),user_.getCardName(),user_.getUserName()
+                                        ,user_.getCardNum(),user_.getMoney(),user_.getPaied(),user_.getTransfer(),user_.getEmpty());
+                                String user__ = new Gson().toJson(user);
+                                Log.d("main_user","user"+user__);
+                                saveNowData();
+                                break;
+                            case 400:
+                                Log.d("fail","ff");
+                                break;
+                        }
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+                        Log.d("fail","fail");
+                        Log.e("asdf", t.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("LoginErr", error.toString());
+            }
+        });
 
         textView = (TextView) findViewById(R.id.add_card);
         textView.setOnClickListener(new View.OnClickListener() {

@@ -4,6 +4,7 @@ import com.example.choi.cracker.Data.User;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -13,4 +14,7 @@ import retrofit2.http.Query;
 public interface RetrofitInterface {
     @GET("/facebook/token")
     Call<User> facebookLogin(@Query("access_token") String token);
+
+    @POST("/card/add")
+    Call<User> cardInfo(@Query("param") String json);
 }

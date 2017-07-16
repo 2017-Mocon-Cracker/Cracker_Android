@@ -76,6 +76,7 @@ public class AddCardInfo extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
                             Log.d("asd",""+response.body());
+                            Log.d("code",""+response.code());
                         }
 
                         @Override
@@ -94,7 +95,6 @@ public class AddCardInfo extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         userName = pref.getString("add_card_name", null);
         user = new Gson().fromJson(userName, User.class);
-        Log.d("asdasd",""+user);
     }
     void saveNowData() {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);

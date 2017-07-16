@@ -14,8 +14,6 @@ package com.example.choi.cracker.Network;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
-import com.example.choi.cracker.Network.Retrofit_Interface;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -33,14 +31,14 @@ public class NetworkHelper {
 
     public static Retrofit retrofit;
 
-    public static Retrofit_Interface getNetworkInstance() {
+    public static RetrofitInterface getNetworkInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(url + ":" + port)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit.create(Retrofit_Interface.class);
+        return retrofit.create(RetrofitInterface.class);
     }
 
     public static boolean returnNetworkState(Context context) {

@@ -1,4 +1,4 @@
-package com.example.choi.cracker.Tutorial_Fragment;
+package com.example.choi.cracker.TutorialFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,8 +14,8 @@ import com.example.choi.cracker.R;
  * Created by choi on 2017. 7. 13..
  */
 
-public class Fragment_Four extends Fragment {
-    public Fragment_Four() {
+public class FragmentOne extends Fragment {
+    public FragmentOne() {
     }
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -27,7 +27,7 @@ public class Fragment_Four extends Fragment {
     {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_tutorial, container, false);
         TextView textView = (TextView)layout.findViewById(R.id.tutotial_num);
-        textView.setText("4");
+        textView.setText("1");
         return layout;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.choi.cracker.data;
+package com.example.choi.cracker.Data;
 
 /**
  * Created by choi on 2017. 7. 15..

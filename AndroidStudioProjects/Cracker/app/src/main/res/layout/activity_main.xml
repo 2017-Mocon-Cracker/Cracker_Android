@@ -3,43 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:weightSum="10"
     tools:context="com.example.choi.cracker.Activity.MainActivity">
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <!--<Button-->
-        <!--android:id="@+id/facebook_login"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"></android.support.v7.widget.Toolbar>-->
+    <!--<com.facebook.login.widget.LoginButton-->
+    <!--android:id="@+id/login_button"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
 
-    <!--<ImageView-->
-        <!--android:id="@+id/card_img"-->
-        <!--android:layout_weight="4"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp" />-->
-
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/used_list"-->
-        <!--android:layout_weight="5"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp" />-->
-    <TextView
-        android:id="@+id/add_card"
-        android:textSize="20sp"
-        android:text="추가하기"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_weight="1"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="#fff" />
 
+    <LinearLayout
+        android:layout_weight="9"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical"
+        android:weightSum="9">
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/card_img"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4" />
+
+        <TextView
+            android:layout_weight="0.5"
+            android:text="사용내역"
+            android:textColor="#fff"
+            android:background="@drawable/use_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/used_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4.5" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#26c6da"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/add_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/add_text"
+            android:paddingBottom="8dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:paddingTop="8dp"
+            android:text="카드 추가하기"
+            android:textColor="#fff"
+            android:textSize="15sp" />
+    </LinearLayout>
 </LinearLayout>

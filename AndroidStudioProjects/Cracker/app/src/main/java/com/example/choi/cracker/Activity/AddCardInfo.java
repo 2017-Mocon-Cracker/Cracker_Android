@@ -12,20 +12,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.choi.cracker.R;
 import com.example.choi.cracker.Data.User;
 import com.google.gson.Gson;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by choi on 2017. 7. 15..
  */
 
 public class AddCardInfo extends AppCompatActivity {
-    EditText cardNickname, cardNumber;
-    TextView cardUsername;
+    EditText cardNickname, cardNumber1, cardNumber2, cardNumber3, cardNumber4;
     String userName;
-    Button addBtn;
+    TextView addBtn;
     User user;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,22 +37,33 @@ public class AddCardInfo extends AppCompatActivity {
         setCustomActionBar();
 
         cardNickname = (EditText) findViewById(R.id.card_nickname);
-        cardNumber = (EditText) findViewById(R.id.card_num);
-        cardUsername = (TextView) findViewById(R.id.card_user_name);
-        addBtn = (Button) findViewById(R.id.add);
-
-        cardUsername.setText(""+ user.getUserName());
+        cardNumber1 = (EditText) findViewById(R.id.card_num_1);
+        cardNumber2 = (EditText) findViewById(R.id.card_num_2);
+        cardNumber3 = (EditText) findViewById(R.id.card_num_3);
+        cardNumber4 = (EditText) findViewById(R.id.card_num_4);
+        addBtn = (TextView) findViewById(R.id.add);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setCardName(cardNickname.getText().toString());
-                int cardNum = Integer.parseInt(cardNumber.getText().toString());
-                user.setCardNum(cardNum);
-                String json_ = new Gson().toJson(user);
-                Log.d("asd",json_);
-                saveNowData();
-                finish();
+                Log.d("null?",cardNumber1.getText()+"");
+                if(cardNumber1.getText().toString().equals("") || cardNumber2.getText().toString().equals("")
+                        || cardNumber3.getText().toString().equals("")|| cardNumber4.getText().toString().equals("")
+                        || cardNickname.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(), "카드번호 또는 이름을 확인해주세요", Toast.LENGTH_SHORT).show();
+                }else if(cardNumber1.length()<4
+                        || cardNumber2.length()<4 || cardNumber3.length() <4
+                        || cardNumber4.length()<4){
+                    Toast.makeText(getApplicationContext(), "카드번호 길이를 확인해주세요", Toast.LENGTH_SHORT).show();
+                }else {
+                    String cardNum = cardNum();
+                    user.setCardName(cardNickname.getText().toString());
+                    user.setCardNum(cardNum);
+                    saveNowData();
+                    Log.d("user",user.getCardNum().toString());
+                    setResult(RESULT_OK);
+                    finish();
+                }
             }
         });
 
@@ -86,5 +99,13 @@ public class AddCardInfo extends AppCompatActivity {
 
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT);
         actionBar.setCustomView(mCustomView,params);
+    }
+    String cardNum(){
+        String cardNum;
+        cardNum = cardNumber1.getText().toString() + "-"
+                + cardNumber2.getText().toString() + "-"
+                + cardNumber3.getText().toString() + "-"
+                + cardNumber4.getText().toString();
+        return  cardNum;
     }
 }

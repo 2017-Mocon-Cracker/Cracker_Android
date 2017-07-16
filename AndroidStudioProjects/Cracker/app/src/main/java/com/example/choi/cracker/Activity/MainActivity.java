@@ -24,21 +24,7 @@ public class MainActivity extends AppCompatActivity {
     String User_name;
     User user;
     Button login;
-    //    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        checkFirstRun();
-//        login = (Button) findViewById(R.id.facebook_login);
-//        login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String url ="http://soylatte.kr:8888/facebook/token";
-//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                startActivity(intent);
-//            }
-//        });
-//    }
+
     private CallbackManager callbackManager;
 
     @Override
@@ -46,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
+        checkFirstRun();
         loadNowData();
-
         callbackManager = CallbackManager.Factory.create();
         setCustomActionBar();
 
@@ -99,9 +85,11 @@ public class MainActivity extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveNowData();
-                Intent intent = new Intent(MainActivity.this, AddCardInfo.class);
-                startActivity(intent);
+                if(textView.getText().toString().equals("카드 추가하기")) {
+                    saveNowData();
+                    Intent intent = new Intent(MainActivity.this, AddCardInfo.class);
+                    startActivityForResult(intent, 333);
+                }
             }
         });
     }
@@ -110,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            if(requestCode==333){
+                loadNowData();
+                if(!user.getCardNum().toString().equals(""))
+                    textView.setText("정보 확인하기");
+            }
+        }
     }
 
     public void checkFirstRun() {

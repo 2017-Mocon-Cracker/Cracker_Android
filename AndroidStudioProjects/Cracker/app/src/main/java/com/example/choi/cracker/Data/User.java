@@ -16,10 +16,10 @@ public class User {
 //            "isTransfer": 0,
 //            "__v": 0
 
-    private String Email, CardName, UserName;
-    private int Money, CardNum;
+    private String Email, CardName, UserName, CardNum;
+    private int Money;
 
-    public User(String email, String cardName, String userName, int money, int cardNum) {
+    public User(String email, String cardName, String userName, int money, String cardNum) {
         Email = email;
         CardName = cardName;
         UserName = userName;
@@ -59,11 +59,11 @@ public class User {
         Money = money;
     }
 
-    public int getCardNum() {
+    public String getCardNum() {
         return CardNum;
     }
 
-    public void setCardNum(int cardNum) {
+    public void setCardNum(String cardNum) {
         CardNum = cardNum;
     }
 }

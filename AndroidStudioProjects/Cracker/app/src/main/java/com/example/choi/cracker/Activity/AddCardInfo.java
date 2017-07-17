@@ -34,6 +34,7 @@ public class AddCardInfo extends AppCompatActivity {
     String userName;
     TextView addBtn;
     User user;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,37 +52,39 @@ public class AddCardInfo extends AppCompatActivity {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("null?",cardNumber1.getText()+"");
-                if(cardNumber1.getText().toString().equals("") || cardNumber2.getText().toString().equals("")
-                        || cardNumber3.getText().toString().equals("")|| cardNumber4.getText().toString().equals("")
-                        || cardNickname.getText().toString().equals("")){
+                Log.d("null?", cardNumber1.getText() + "");
+                if (cardNumber1.getText().toString().equals("") || cardNumber2.getText().toString().equals("")
+                        || cardNumber3.getText().toString().equals("") || cardNumber4.getText().toString().equals("")
+                        || cardNickname.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "카드번호 또는 이름을 확인해주세요", Toast.LENGTH_SHORT).show();
-                }else if(cardNumber1.length()<4
-                        || cardNumber2.length()<4 || cardNumber3.length() <4
-                        || cardNumber4.length()<4){
+                } else if (cardNumber1.length() < 4
+                        || cardNumber2.length() < 4 || cardNumber3.length() < 4
+                        || cardNumber4.length() < 4) {
                     Toast.makeText(getApplicationContext(), "카드번호 길이를 확인해주세요", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     String cardNum = cardNum();
                     user.setCardName(cardNickname.getText().toString());
                     user.setCardNum(cardNum);
                     saveNowData();
-                    Log.d("user",user.getCardNum().toString());
+                    Log.d("user", user.getCardNum().toString());
                     setResult(RESULT_OK);
 //                    String email, String cardName, String userName, String cardNum, int money, int paied, Boolean isTransfer
 //                    Call<User> access = NetworkHelper.getNetworkInstance().facebookLogin(loginResult.getAccessToken().getToken());
                     String json = new Gson().toJson(user);
-                    Log.d("json",json);
+                    Log.d("json", json);
                     Call<User> access = NetworkHelper.getNetworkInstance().cardInfo(json);
                     access.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
-                            Log.d("asd",""+response.body());
-                            Log.d("code",""+response.code());
+                            Log.d("asd", "" + response.body());
+                            Log.d("code", "" + response.code());
+                            String user__ = new Gson().toJson(user);
+                            Log.d("main_user", "user" + user__);
                         }
 
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
-                            Log.d("fail",t.getMessage());
+                            Log.d("fail", t.getMessage());
                         }
                     });
                     finish();
@@ -96,15 +99,17 @@ public class AddCardInfo extends AppCompatActivity {
         userName = pref.getString("add_card_name", null);
         user = new Gson().fromJson(userName, User.class);
     }
+
     void saveNowData() {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         String json = new Gson().toJson(user);
         editor.putString("add_card_name", json);
+        editor.putBoolean("noCard", false);
         editor.apply();
     }
 
-    public void setCustomActionBar(){
+    public void setCustomActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.addcard_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -112,22 +117,22 @@ public class AddCardInfo extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false); // 뒤로가기 버튼, 디폴트로 true만 해도 백버튼이 생김
 
-        View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar_addcard,null);
+        View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar_addcard, null);
         actionBar.setCustomView(mCustomView);
 
         Toolbar parent = (Toolbar) mCustomView.getParent();
-        parent.setContentInsetsAbsolute(0,0);
+        parent.setContentInsetsAbsolute(0, 0);
 
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT);
-        actionBar.setCustomView(mCustomView,params);
+        actionBar.setCustomView(mCustomView, params);
     }
 
-    String cardNum(){
+    String cardNum() {
         String cardNum;
         cardNum = cardNumber1.getText().toString() + "-"
                 + cardNumber2.getText().toString() + "-"
                 + cardNumber3.getText().toString() + "-"
                 + cardNumber4.getText().toString();
-        return  cardNum;
+        return cardNum;
     }
 }

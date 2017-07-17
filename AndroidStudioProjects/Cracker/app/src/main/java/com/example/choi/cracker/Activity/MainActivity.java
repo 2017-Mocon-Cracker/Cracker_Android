@@ -2,6 +2,7 @@ package com.example.choi.cracker.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.choi.cracker.Network.NetworkHelper;
@@ -34,7 +36,10 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     String User_name;
     User user;
+    Boolean noCard = true;
     Button login;
+    TextView usedListText;
+    ImageView cardImg;
 
     private CallbackManager callbackManager;
 
@@ -47,9 +52,8 @@ public class MainActivity extends AppCompatActivity {
         loadNowData();
         callbackManager = CallbackManager.Factory.create();
         setCustomActionBar();
-
-
-
+        usedListText = (TextView) findViewById(R.id.used_list_text);
+        cardImg = (ImageView) findViewById(R.id.card_img);
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -66,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e("asdf", response.body().getUserName());
                                 User user_ = response.body();
 //                                String email, String cardName, String userName, String cardNum, int money, int paied, Boolean isTransfer
-                                user = new User(user_.getEmail(),user_.getCardName(),user_.getUserName()
+                                user = new User(user_.getFacebook_ID(),user_.getCardName(),user_.getUserName()
                                         ,user_.getCardNum(),user_.getMoney(),user_.getPaied(),user_.getTransfer(),user_.getEmpty());
                                 String user__ = new Gson().toJson(user);
                                 Log.d("main_user","user"+user__);
@@ -97,7 +101,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("LoginErr", error.toString());
             }
         });
-
+        if (noCard){
+            usedListText.setVisibility(View.GONE);
+        }
         textView = (TextView) findViewById(R.id.add_card);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
                     saveNowData();
                     Intent intent = new Intent(MainActivity.this, AddCardInfo.class);
                     startActivityForResult(intent, 333);
+                }else if(textView.getText().toString().equals("정보 확인하기")){
+
                 }
             }
         });
@@ -120,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
                 loadNowData();
                 if(!user.getCardNum().toString().equals(""))
                     textView.setText("정보 확인하기");
+                if (!noCard){
+                    usedListText.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -145,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         User_name = pref.getString("add_card_name", null);
         user = new Gson().fromJson(User_name, User.class);
+        noCard = pref.getBoolean("noCard",true);
         Log.d("asdasd",""+user);
     }
 

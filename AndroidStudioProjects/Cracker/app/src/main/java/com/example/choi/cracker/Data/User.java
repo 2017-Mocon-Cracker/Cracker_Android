@@ -16,52 +16,16 @@ public class User {
 //            "isTransfer": 0,
 //            "__v": 0
 
-    private String Email, CardName, UserName, CardNum;
+    private String Facebook_ID, CardName, UserName, CardNum;
     private int Money;
-    private Boolean isTransfer,isEmpty, Paied;
+    private Boolean isTransfer, isEmpty, Paied;
 
-    public Boolean getEmpty() {
-        return isEmpty;
+    public String getFacebook_ID() {
+        return Facebook_ID;
     }
 
-    public void setEmpty(Boolean empty) {
-        isEmpty = empty;
-    }
-
-    public User(String email, String cardName, String userName, String cardNum, int money, Boolean paied, Boolean isTransfer, Boolean isEmpty) {
-        Email = email;
-        CardName = cardName;
-        UserName = userName;
-        CardNum = cardNum;
-        Money = money;
-
-        Paied = paied;
-        this.isTransfer = isTransfer;
-        this.isEmpty = isEmpty;
-    }
-
-    public Boolean getPaied() {
-        return Paied;
-    }
-
-    public void setPaied(Boolean paied) {
-        Paied = paied;
-    }
-
-    public Boolean getTransfer() {
-        return isTransfer;
-    }
-
-    public void setTransfer(Boolean transfer) {
-        isTransfer = transfer;
-    }
-
-    public String getEmail() {
-        return Email;
-    }
-
-    public void setEmail(String email) {
-        Email = email;
+    public void setFacebook_ID(String facebook_ID) {
+        Facebook_ID = facebook_ID;
     }
 
     public String getCardName() {
@@ -80,6 +44,14 @@ public class User {
         UserName = userName;
     }
 
+    public String getCardNum() {
+        return CardNum;
+    }
+
+    public void setCardNum(String cardNum) {
+        CardNum = cardNum;
+    }
+
     public int getMoney() {
         return Money;
     }
@@ -88,11 +60,39 @@ public class User {
         Money = money;
     }
 
-    public String getCardNum() {
-        return CardNum;
+    public Boolean getTransfer() {
+        return isTransfer;
     }
 
-    public void setCardNum(String cardNum) {
+    public void setTransfer(Boolean transfer) {
+        isTransfer = transfer;
+    }
+
+    public Boolean getEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(Boolean empty) {
+        isEmpty = empty;
+    }
+
+    public Boolean getPaied() {
+        return Paied;
+    }
+
+    public void setPaied(Boolean paied) {
+        Paied = paied;
+    }
+
+    public User(String facebook_ID, String cardName, String userName, String cardNum, int money, Boolean isTransfer, Boolean isEmpty, Boolean paied) {
+
+        Facebook_ID = facebook_ID;
+        CardName = cardName;
+        UserName = userName;
         CardNum = cardNum;
+        Money = money;
+        this.isTransfer = isTransfer;
+        this.isEmpty = isEmpty;
+        Paied = paied;
     }
 }

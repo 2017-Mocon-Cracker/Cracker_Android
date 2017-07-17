@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
 //                                String email, String cardName, String userName, String cardNum, int money, int paied, Boolean isTransfer
                                 user = new User(user_.getFacebook_ID(),user_.getCardName(),user_.getUserName()
                                         ,user_.getCardNum(),user_.getMoney(),user_.getPaied(),user_.getTransfer(),user_.getEmpty(),user_.getCardIn());
-                                String user__ = new Gson().toJson(user);
-                                Log.d("main_user","user"+user__);
                                 saveNowData();
                                 break;
                             case 400:
@@ -126,14 +124,14 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK){
             if(requestCode==333){
                 loadNowData();
-                if(!user.getCardNum().toString().equals(""))
+                if(!user.getCardIn()){
+                    textView.setText("카드 추가하기");
+                }else
                     textView.setText("정보 확인하기");
-                if (!noCard){
-                    usedListText.setVisibility(View.VISIBLE);
-                }
             }
         }
         if(!user.getCardIn()){
+            usedListText.setVisibility(View.GONE);
             textView.setText("카드 추가하기");
         }else
             textView.setText("정보 확인하기");

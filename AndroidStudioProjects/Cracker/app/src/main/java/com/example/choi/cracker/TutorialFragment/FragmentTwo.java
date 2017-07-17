@@ -14,8 +14,8 @@ import com.example.choi.cracker.R;
  * Created by choi on 2017. 7. 13..
  */
 
-public class FragmentTwo extends Fragment {
-    public FragmentTwo() {
+public class FragmentFive extends Fragment {
+    public FragmentFive() {
     }
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -26,8 +26,6 @@ public class FragmentTwo extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_tutorial, container, false);
-        TextView textView = (TextView)layout.findViewById(R.id.tutotial_num);
-        textView.setText("2");
         return layout;
     }
 }

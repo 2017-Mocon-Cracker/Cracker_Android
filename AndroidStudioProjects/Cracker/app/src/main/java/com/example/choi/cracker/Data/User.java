@@ -18,7 +18,7 @@ public class User {
 
     private String Facebook_ID, CardName, UserName, CardNum;
     private int Money;
-    private Boolean isTransfer, isEmpty, Paied;
+    private Boolean isTransfer, isEmpty, Paied,CardIn;
 
     public String getFacebook_ID() {
         return Facebook_ID;
@@ -84,8 +84,16 @@ public class User {
         Paied = paied;
     }
 
-    public User(String facebook_ID, String cardName, String userName, String cardNum, int money, Boolean isTransfer, Boolean isEmpty, Boolean paied) {
+    public Boolean getCardIn() {
+        return CardIn;
+    }
 
+    public void setCardIn(Boolean cardIn) {
+        CardIn = cardIn;
+    }
+
+    public User(String facebook_ID, String cardName, String userName, String cardNum, int money, Boolean isTransfer, Boolean isEmpty, Boolean paied, Boolean cardIn) {
+        CardIn = cardIn;
         Facebook_ID = facebook_ID;
         CardName = cardName;
         UserName = userName;

@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                 User user_ = response.body();
 //                                String email, String cardName, String userName, String cardNum, int money, int paied, Boolean isTransfer
                                 user = new User(user_.getFacebook_ID(),user_.getCardName(),user_.getUserName()
-                                        ,user_.getCardNum(),user_.getMoney(),user_.getPaied(),user_.getTransfer(),user_.getEmpty());
+                                        ,user_.getCardNum(),user_.getMoney(),user_.getPaied(),user_.getTransfer(),user_.getEmpty(),user_.getCardIn());
                                 String user__ = new Gson().toJson(user);
                                 Log.d("main_user","user"+user__);
                                 saveNowData();
@@ -133,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        if(!user.getCardIn()){
+            textView.setText("카드 추가하기");
+        }else
+            textView.setText("정보 확인하기");
     }
 
     public void checkFirstRun() {

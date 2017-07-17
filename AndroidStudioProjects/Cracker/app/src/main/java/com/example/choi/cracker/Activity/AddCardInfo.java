@@ -65,6 +65,7 @@ public class AddCardInfo extends AppCompatActivity {
                     String cardNum = cardNum();
                     user.setCardName(cardNickname.getText().toString());
                     user.setCardNum(cardNum);
+                    user.setCardIn(true);
                     saveNowData();
                     Log.d("user", user.getCardNum().toString());
                     setResult(RESULT_OK);
@@ -91,7 +92,6 @@ public class AddCardInfo extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     void loadNowData() {

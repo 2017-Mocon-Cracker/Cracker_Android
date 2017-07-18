@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import app.akexorcist.bluetotohspp.library.BluetoothSPP;
+import app.akexorcist.bluetotohspp.library.BluetoothState;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     String User_name;
     User user;
     Boolean noCard = true, isLogin;
+    private static final UUID UUID_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     Button login;
     private final static int REQUEST_ENABLE_BT = 1;
     TextView usedListText;
@@ -67,23 +70,17 @@ public class MainActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
     private BluetoothService btService = null;
+    BluetoothSPP bt;
+    String receive;
 
-    private final Handler mHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
-        checkFirstRun();
         loadNowData();
+        checkFirstRun();
         if (!isLogin) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
@@ -111,10 +108,50 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        // BluetoothService 클래스 생성
-        if (btService == null) {
-            btService = new BluetoothService(this, mHandler);
+
+        bt = new BluetoothSPP(this);
+        Log.d("asdf",bt.isBluetoothAvailable()+"");
+
+        if(!bt.isBluetoothAvailable())
+        {
+            Log.d("asdf","asdf");
+            Toast.makeText(getApplicationContext()
+                    , "블루투스를 켜주세요"
+                    , Toast.LENGTH_SHORT).show();
+            finish();
         }
+
+
+        bt.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener()
+
+        {
+            public void onDeviceConnected(String name, String address) {        //연결
+                Log.d("asd","asd");
+            }
+
+            public void onDeviceDisconnected() {    //연결끊김
+                Log.d("asd","asd");
+            }
+
+            public void onDeviceConnectionFailed() {
+            }
+        });
+
+        bt.setAutoConnectionListener(new BluetoothSPP.AutoConnectionListener() {
+            public void onNewConnection(String name, String address) {
+                Log.d("asd",name+address);
+            }
+
+            public void onAutoConnectionStarted() {
+                Log.d("asd","asdasdas");
+            }
+        });
+        bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
+            public void onDataReceived(byte[] data, String message) {
+                receive = message;
+                Log.d("fuck",message);
+            }
+        });
     }
 
     @Override
@@ -159,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                             String action = intent.getAction();
                             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                                Log.d("devicename",""+device.getName());
+                                Log.d("devicename", "" + device.getName());
                             }
                         }
                     };
@@ -177,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
     public void checkFirstRun() {
         prefs = getSharedPreferences("Pref", MODE_PRIVATE);
         boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+        Log.d("isFirstRun", isFirstRun + "");
         if (isFirstRun) {
             Intent newIntent = new Intent(MainActivity.this, GuideActivity.class);
             startActivity(newIntent);
@@ -227,5 +265,20 @@ public class MainActivity extends AppCompatActivity {
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT);
         actionBar.setCustomView(mCustomView, params);
 
+    }
+    public void onStart() {
+        super.onStart();
+        if (!bt.isBluetoothEnabled()) {
+            bt.enable();
+        } else {
+            if (!bt.isServiceAvailable()) {
+                bt.setupService();
+                bt.startService(BluetoothState.DEVICE_OTHER);
+                setup();
+            }
+        }
+    }
+    public void setup() {
+        bt.autoConnect("SUNRIN");
     }
 }

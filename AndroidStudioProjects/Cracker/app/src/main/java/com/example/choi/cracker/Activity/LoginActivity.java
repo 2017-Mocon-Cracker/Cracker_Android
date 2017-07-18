@@ -38,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_login);
         callbackManager = CallbackManager.Factory.create();
+        Log.d("asd","asd");
+
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -77,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-
+                Log.d("logincancle","asd");
             }
 
             @Override

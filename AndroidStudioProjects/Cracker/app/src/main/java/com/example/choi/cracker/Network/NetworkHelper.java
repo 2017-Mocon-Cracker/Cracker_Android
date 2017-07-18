@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class NetworkHelper {
     private Context context;
-    final public static String url = "http://soylatte.kr";
+    final public static String url = "https://soylatte.kr";
     final public static int port = 8888;
 
     public NetworkHelper(Context context) {

@@ -31,7 +31,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
-        loadNowData();
         final ViewPager viewPager = (ViewPager)findViewById(R.id.guide_pager);
         skip = (TextView) findViewById(R.id.tutorial_skip);
         next = (ImageView) findViewById(R.id.tutorial_next);
@@ -63,11 +62,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 int a = viewPager.getCurrentItem();
-                if (a!=2)
+                if (a!=2){
                     viewPager.setCurrentItem(++a);
-                else if(!isLogin){
-                    startActivity(new Intent(GuideActivity.this,LoginActivity.class));
-                    finish();
                 }else
                     finish();
             }

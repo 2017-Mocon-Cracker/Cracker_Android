@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
+        android:id="@+id/login_menu"
         android:layout_centerVertical="true"
         android:src="@mipmap/ic_menu"
         android:layout_width="wrap_content"

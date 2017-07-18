@@ -18,6 +18,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.choi.cracker.Adapter.UsedListAdapter;
 import com.example.choi.cracker.BluetoothService;
+import com.example.choi.cracker.Data.RideData;
 import com.example.choi.cracker.Network.NetworkHelper;
 import com.example.choi.cracker.R;
 import com.example.choi.cracker.Data.User;
@@ -61,17 +64,19 @@ public class MainActivity extends AppCompatActivity {
     String User_name;
     User user;
     Boolean noCard = true, isLogin;
-    private static final UUID UUID_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     Button login;
     private final static int REQUEST_ENABLE_BT = 1;
     TextView usedListText;
     ImageView cardImg;
     BluetoothAdapter btAdapter;
-
+    RecyclerView usedList;
+    UsedListAdapter listAdapter;
     private CallbackManager callbackManager;
     private BluetoothService btService = null;
     BluetoothSPP bt;
     String receive;
+    List<RideData> RideDatas = new ArrayList<>();
+    int num=0;
 
 
     @Override
@@ -81,13 +86,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         loadNowData();
         checkFirstRun();
-        if (!isLogin) {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        }
         callbackManager = CallbackManager.Factory.create();
         setCustomActionBar();
         usedListText = (TextView) findViewById(R.id.used_list_text);
         cardImg = (ImageView) findViewById(R.id.card_img);
+        usedList = (RecyclerView) findViewById(R.id.used_list);
+        listAdapter = new UsedListAdapter(RideDatas,getApplicationContext(),R.layout.used_list_item);
 
         if (noCard) {
             usedListText.setVisibility(View.GONE);
@@ -96,25 +100,25 @@ public class MainActivity extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (textView.getText().toString().equals("카드 추가하기")) {
+                if (!isLogin) {
+                    Toast.makeText(getApplicationContext(),"로그인해주세요",Toast.LENGTH_SHORT).show();
+                } else if (textView.getText().toString().equals("카드 추가하기")) {
                     if (user == null)
                         user = new User("", "", ""
                                 , "", 0, false, false, false, false);
                     saveNowData();
                     Intent intent = new Intent(MainActivity.this, AddCardInfo.class);
                     startActivityForResult(intent, 333);
-                } else if (textView.getText().toString().equals("정보 확인하기")) {
-
+                } else if (textView.getText().toString().equals("삭제하기")) {
                 }
             }
         });
 
         bt = new BluetoothSPP(this);
-        Log.d("asdf",bt.isBluetoothAvailable()+"");
+        Log.d("asdf", bt.isBluetoothAvailable() + "");
 
-        if(!bt.isBluetoothAvailable())
-        {
-            Log.d("asdf","asdf");
+        if (!bt.isBluetoothAvailable()) {
+            Log.d("asdf", "asdf");
             Toast.makeText(getApplicationContext()
                     , "블루투스를 켜주세요"
                     , Toast.LENGTH_SHORT).show();
@@ -126,11 +130,12 @@ public class MainActivity extends AppCompatActivity {
 
         {
             public void onDeviceConnected(String name, String address) {        //연결
-                Log.d("asd","asd");
+
             }
 
             public void onDeviceDisconnected() {    //연결끊김
-                Log.d("asd","asd");
+                Toast.makeText(MainActivity.this, "하차", Toast.LENGTH_SHORT).show();
+                RideDatas.add(new RideData(user.getMoney(),receive,"0"));
             }
 
             public void onDeviceConnectionFailed() {
@@ -139,17 +144,21 @@ public class MainActivity extends AppCompatActivity {
 
         bt.setAutoConnectionListener(new BluetoothSPP.AutoConnectionListener() {
             public void onNewConnection(String name, String address) {
-                Log.d("asd",name+address);
+                Log.d("asd", name + address);
             }
 
             public void onAutoConnectionStarted() {
-                Log.d("asd","asdasdas");
+                Log.d("asd", "asdasdas");
             }
         });
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
                 receive = message;
-                Log.d("fuck",message);
+                if(num==0){
+                    RideDatas.add(new RideData(user.getMoney(),receive,"720"));
+                    num++;
+                }
+
             }
         });
     }
@@ -167,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (!user.getFacebook_ID().equals("")) {
                         usedListText.setVisibility(View.VISIBLE);
-                        textView.setText("정보 확인하기");
+                        textView.setText("삭제하기");
                     }
                 }
                 break;
@@ -262,10 +271,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(settingsIntent, 555);
             }
         });
+        ImageView login = (ImageView) findViewById(R.id.login_menu);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT);
         actionBar.setCustomView(mCustomView, params);
 
     }
+
     public void onStart() {
         super.onStart();
         if (!bt.isBluetoothEnabled()) {
@@ -278,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public void setup() {
         bt.autoConnect("SUNRIN");
     }

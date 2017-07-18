@@ -14,8 +14,8 @@ import com.example.choi.cracker.R;
  * Created by choi on 2017. 7. 13..
  */
 
-public class FragmentFour extends Fragment {
-    public FragmentFour() {
+public class FragmentThr extends Fragment {
+    public FragmentThr() {
     }
     @Override
     public void onCreate(Bundle savedInstanceState)

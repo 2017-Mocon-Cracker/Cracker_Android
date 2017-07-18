@@ -63,6 +63,7 @@ public class AddCardInfo extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "카드번호 길이를 확인해주세요", Toast.LENGTH_SHORT).show();
                 } else {
                     String cardNum = cardNum();
+                    Log.d("asd",cardNickname.getText().toString());
                     user.setCardName(cardNickname.getText().toString());
                     user.setCardNum(cardNum);
                     user.setCardIn(true);

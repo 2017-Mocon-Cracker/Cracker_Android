@@ -8,11 +8,6 @@
     android:weightSum="10"
     tools:context="com.example.choi.cracker.Activity.MainActivity">
 
-    <com.facebook.login.widget.LoginButton
-    android:id="@+id/login_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

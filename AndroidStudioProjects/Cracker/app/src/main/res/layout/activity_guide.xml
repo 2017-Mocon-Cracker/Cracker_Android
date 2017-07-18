@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:weightSum="10"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v4.view.ViewPager
+        android:layout_weight="9"
         android:id="@+id/guide_pager"
-        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/tutorial_next_btn"
-        android:src="@mipmap/ic_arrow"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="70dp"
-        android:backgroundTint="@color/btn_color"
-        android:layout_width="wrap_content"
-        app:borderWidth="0dp"
-        app:elevation="6dp"
-        android:layout_height="wrap_content"
-        app:fabSize="normal"/>
-    <TextView
-        android:id="@+id/next_text"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:visibility="gone"
-        android:text="계속하기"
-        android:layout_width="match_parent"
-        android:layout_height="40dp" />
+        android:layout_height="0dp" />
 
-</RelativeLayout>
+    <RelativeLayout
+        android:background="@color/colorPrimary"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <TextView
+            android:layout_centerVertical="true"
+            android:textColor="#fff"
+            android:layout_marginLeft="10dp"
+            android:textSize="25sp"
+            android:text="Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/ic_right_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.example.choi.cracker.CustomIndicator
+            android:id="@+id/custom_indicator"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</LinearLayout>

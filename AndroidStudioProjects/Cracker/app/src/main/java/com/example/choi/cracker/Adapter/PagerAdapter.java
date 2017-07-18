@@ -2,8 +2,6 @@ package com.example.choi.cracker.Adapter;
 
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.choi.cracker.TutorialFragment.FragmentFive;
-import com.example.choi.cracker.TutorialFragment.FragmentFour;
 import com.example.choi.cracker.TutorialFragment.FragmentThr;
 import com.example.choi.cracker.TutorialFragment.FragmentTwo;
 import com.example.choi.cracker.TutorialFragment.FragmentOne;
@@ -31,10 +29,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 return new FragmentTwo();
             case 2:
                 return new FragmentThr();
-            case 3:
-                return new FragmentFour();
-            case 4:
-                return new FragmentFive();
             default:
                 return null;
         }
@@ -42,6 +36,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return 3;
     }
 }

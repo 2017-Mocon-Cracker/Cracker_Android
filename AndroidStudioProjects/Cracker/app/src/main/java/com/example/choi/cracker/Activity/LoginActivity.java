@@ -1,12 +1,12 @@
 package com.example.choi.cracker.Activity;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import com.example.choi.cracker.Data.User;
 import com.example.choi.cracker.Network.NetworkHelper;
@@ -103,5 +103,11 @@ public class LoginActivity extends AppCompatActivity {
         user = new Gson().fromJson(User_name, User.class);
         Boolean noCard = pref.getBoolean("noCard",true);
         Log.d("asdasd",""+user);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -17,4 +17,7 @@ public interface RetrofitInterface {
 
     @POST("/card/add")
     Call<User> cardInfo(@Query("param") String json);
+
+    @POST("/card/del")
+    Call<User> carddel(@Query("delete") String ID);
 }

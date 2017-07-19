@@ -31,6 +31,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
+        checkFirstRun();
         final ViewPager viewPager = (ViewPager)findViewById(R.id.guide_pager);
         skip = (TextView) findViewById(R.id.tutorial_skip);
         next = (ImageView) findViewById(R.id.tutorial_next);
@@ -43,7 +44,6 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -57,27 +57,27 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        skip.setOnClickListener(this);
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(GuideActivity.this,MainActivity.class));
+                finish();
+            }
+        });
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int a = viewPager.getCurrentItem();
                 if (a!=2){
                     viewPager.setCurrentItem(++a);
-                }else
+                }else {
+                    startActivity(new Intent(GuideActivity.this,MainActivity.class));
                     finish();
+                }
             }
         });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.tutorial_skip:
-                finish();
-                break;
-        }
-    }
     void saveNowData() { //items 안의 내용이 저장됨
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -88,5 +88,21 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     void loadNowData() {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         isLogin = pref.getBoolean("isLogin",false);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+    public void checkFirstRun() {
+        SharedPreferences prefs;
+        prefs = getSharedPreferences("Pref", MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+        if (!isFirstRun) {
+            Intent newIntent = new Intent(GuideActivity.this, MainActivity.class);
+            startActivity(newIntent);
+            prefs.edit().putBoolean("isFirstRun", false).apply();
+            finish();
+        }
     }
 }

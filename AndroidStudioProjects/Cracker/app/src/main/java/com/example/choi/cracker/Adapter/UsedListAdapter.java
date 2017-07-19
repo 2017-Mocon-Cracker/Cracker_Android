@@ -40,11 +40,11 @@ public class UsedListAdapter extends RecyclerView.Adapter<UsedListAdapter.ViewHo
     @Override
     public void onBindViewHolder(UsedListAdapter.ViewHolder holder, int position) {
         if(position%2==0){
-            holder.whereRide.setText("[버스]" + items.get(position).getWhereRide() + "번 승차");
+            holder.whereRide.setText("[버스]" + items.get(position).getWhereRide() + "번 숙대입구역 승차");
         }else{
-            holder.whereRide.setText("[버스]" + items.get(position).getWhereRide() + "번 하차");
+            holder.whereRide.setText("[버스]" + items.get(position).getWhereRide() + "번 신도림역 하차");
         }
-        holder.usedMoney.setText("720\\");
+        holder.usedMoney.setText(items.get(position).getUsedMony()+"￦");
         holder.money.setText("잔액" + items.get(position).getMoney() + "원");
     }
 

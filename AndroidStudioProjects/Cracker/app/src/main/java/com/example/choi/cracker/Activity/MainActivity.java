@@ -2,29 +2,23 @@ package com.example.choi.cracker.Activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.Image;
-import android.os.Handler;
-import android.os.Message;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,21 +30,16 @@ import com.example.choi.cracker.Network.NetworkHelper;
 import com.example.choi.cracker.R;
 import com.example.choi.cracker.Data.User;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
@@ -60,8 +49,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = null;
-    TextView textView;
+    TextView textView, cardNumText;
     String User_name;
+    ImageView cardImgView;
     User user;
     Boolean noCard = true, isLogin;
     Button login;
@@ -76,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
     BluetoothSPP bt;
     String receive;
     List<RideData> RideDatas = new ArrayList<>();
-    int num=0;
+    int num;
+    Boolean isRide = false;
 
 
     @Override
@@ -85,23 +76,44 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
         loadNowData();
-        checkFirstRun();
+        loadRideData();
+        num = 0;
         callbackManager = CallbackManager.Factory.create();
         setCustomActionBar();
         usedListText = (TextView) findViewById(R.id.used_list_text);
         cardImg = (ImageView) findViewById(R.id.card_img);
         usedList = (RecyclerView) findViewById(R.id.used_list);
-        listAdapter = new UsedListAdapter(RideDatas,getApplicationContext(),R.layout.used_list_item);
+        cardImgView = (ImageView) findViewById(R.id.card_img);
+        cardNumText = (TextView) findViewById(R.id.card_num);
+        listAdapter = new UsedListAdapter(RideDatas, getApplicationContext(), R.layout.used_list_item);
+        usedList.setAdapter(listAdapter);
+        usedList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+        usedList.setItemAnimator(new DefaultItemAnimator());
+        textView = (TextView) findViewById(R.id.add_card);
 
         if (noCard) {
             usedListText.setVisibility(View.GONE);
         }
-        textView = (TextView) findViewById(R.id.add_card);
+        if(user!=null) {
+            if (user.getCardIn()) {
+                usedListText.setVisibility(View.VISIBLE);
+                textView.setText("삭제하기");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    cardImgView.setBackground(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.cardimg)));
+                }
+                cardNumText.setText("" + user.getCardNum());
+            }
+        }else {
+                usedListText.setVisibility(View.GONE);
+                textView.setText("카드 추가하기");
+                cardImgView.setImageDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.no_card)));
+        }
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isLogin) {
-                    Toast.makeText(getApplicationContext(),"로그인해주세요",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "로그인해주세요", Toast.LENGTH_SHORT).show();
                 } else if (textView.getText().toString().equals("카드 추가하기")) {
                     if (user == null)
                         user = new User("", "", ""
@@ -110,15 +122,26 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, AddCardInfo.class);
                     startActivityForResult(intent, 333);
                 } else if (textView.getText().toString().equals("삭제하기")) {
+                    Call<User> access = NetworkHelper.getNetworkInstance().carddel(user.getFacebook_ID());
+                    access.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+
+                        }
+                    });
                 }
             }
         });
 
+
         bt = new BluetoothSPP(this);
-        Log.d("asdf", bt.isBluetoothAvailable() + "");
 
         if (!bt.isBluetoothAvailable()) {
-            Log.d("asdf", "asdf");
             Toast.makeText(getApplicationContext()
                     , "블루투스를 켜주세요"
                     , Toast.LENGTH_SHORT).show();
@@ -130,12 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
         {
             public void onDeviceConnected(String name, String address) {        //연결
-
+                Toast.makeText(MainActivity.this, "승차", Toast.LENGTH_SHORT).show();
             }
 
             public void onDeviceDisconnected() {    //연결끊김
-                Toast.makeText(MainActivity.this, "하차", Toast.LENGTH_SHORT).show();
-                RideDatas.add(new RideData(user.getMoney(),receive,"0"));
             }
 
             public void onDeviceConnectionFailed() {
@@ -144,19 +165,40 @@ public class MainActivity extends AppCompatActivity {
 
         bt.setAutoConnectionListener(new BluetoothSPP.AutoConnectionListener() {
             public void onNewConnection(String name, String address) {
-                Log.d("asd", name + address);
+                if (isRide) {
+                    Toast.makeText(MainActivity.this, "하차", Toast.LENGTH_SHORT).show();
+                    RideDatas.add(new RideData(user.getMoney(), receive, "0"));
+                    isRide = false;
+                    synchronized (listAdapter) {
+                        listAdapter.notifyDataSetChanged();
+                        saveNowData();
+                    }
+                }
             }
 
             public void onAutoConnectionStarted() {
-                Log.d("asd", "asdasdas");
             }
         });
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
                 receive = message;
-                if(num==0){
-                    RideDatas.add(new RideData(user.getMoney(),receive,"720"));
-                    num++;
+                if (user.getCardNum().equals("")) {
+                    num = 0;
+                } else if (num == 0) {
+                    if (user.getMoney()>=720) {
+                        int mymoney = user.getMoney();
+                        user.setMoney(mymoney - 720);
+                        RideDatas.add(new RideData(user.getMoney(), receive, "720"));
+                        Toast.makeText(getApplicationContext(), "승차", Toast.LENGTH_SHORT).show();
+                        isRide = true;
+                        synchronized (listAdapter) {
+                            listAdapter.notifyDataSetChanged();
+                            saveNowData();
+                        }
+                        num++;
+                    }else{
+                        Toast.makeText(getApplicationContext(), "돈 부족 현재잔액 확인!!", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -177,6 +219,10 @@ public class MainActivity extends AppCompatActivity {
                     if (!user.getFacebook_ID().equals("")) {
                         usedListText.setVisibility(View.VISIBLE);
                         textView.setText("삭제하기");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            cardImgView.setBackground(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.cardimg)));
+                        }
+                        cardNumText.setText("" + user.getCardNum());
                     }
                 }
                 break;
@@ -196,40 +242,16 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("asd", "Bluetooth is not enabled");
                 }
                 break;
-            case 555:                   //블루투스 페어링했을때
-                Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
-                if (pairedDevices.size() > 0) {
-                    // 페어링 된 장치가 있는 경우.
-                    final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-                        public void onReceive(Context context, Intent intent) {
-                            String action = intent.getAction();
-                            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                                Log.d("devicename", "" + device.getName());
-                            }
-                        }
-                    };
 
-                } else {
-                    Toast.makeText(getApplicationContext(), "블루투스 페어링을 해주세요", Toast.LENGTH_SHORT).show();
-
-                }
-                break;
 
         }
     }
 
-
-    public void checkFirstRun() {
-        prefs = getSharedPreferences("Pref", MODE_PRIVATE);
-        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
-        Log.d("isFirstRun", isFirstRun + "");
-        if (isFirstRun) {
-            Intent newIntent = new Intent(MainActivity.this, GuideActivity.class);
-            startActivity(newIntent);
-            prefs.edit().putBoolean("isFirstRun", false).apply();
-            finish();
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadNowData();
+        listAdapter.notifyDataSetChanged();
     }
 
     void saveNowData() { //items 안의 내용이 저장됨
@@ -237,7 +259,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = pref.edit();
         String json = new Gson().toJson(user);
         editor.putString("add_card_name", json);
-        editor.commit();
+        String json_ = new Gson().toJson(RideDatas);
+        editor.putString("RideData",json_);
+        editor.apply();
     }
 
     void loadNowData() {
@@ -246,6 +270,16 @@ public class MainActivity extends AppCompatActivity {
         user = new Gson().fromJson(User_name, User.class);
         noCard = pref.getBoolean("noCard", true);
         isLogin = pref.getBoolean("isLogin", false);
+    }
+
+    void loadRideData(){
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        String ridedata_ = pref.getString("RideData", "");
+        ArrayList<RideData> items_ = new ArrayList<>();
+        items_ = new Gson().fromJson(ridedata_, new TypeToken<ArrayList<RideData>>(){}.getType());
+        if(items_ != null) {
+            RideDatas.addAll(items_);
+        }
     }
 
     public void setCustomActionBar() {
@@ -298,5 +332,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void setup() {
         bt.autoConnect("SUNRIN");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("asd", "Asdsadasd");
+        bt.stopService();
     }
 }

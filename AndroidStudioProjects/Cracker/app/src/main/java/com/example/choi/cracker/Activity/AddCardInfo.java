@@ -78,10 +78,6 @@ public class AddCardInfo extends AppCompatActivity {
                     access.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
-                            Log.d("asd", "" + response.body());
-                            Log.d("code", "" + response.code());
-                            String user__ = new Gson().toJson(user);
-                            Log.d("main_user", "user" + user__);
                         }
 
                         @Override

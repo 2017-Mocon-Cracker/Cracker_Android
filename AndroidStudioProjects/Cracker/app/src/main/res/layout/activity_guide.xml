@@ -18,14 +18,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
         <TextView
+            android:id="@+id/tutorial_skip"
             android:layout_centerVertical="true"
             android:textColor="#fff"
             android:layout_marginLeft="10dp"
-            android:textSize="25sp"
-            android:text="Next"
+            android:textSize="20sp"
+            android:text="Skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <ImageView
+            android:id="@+id/tutorial_next"
             android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"

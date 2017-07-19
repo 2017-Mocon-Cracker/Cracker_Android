@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     String receive;
     List<RideData> RideDatas = new ArrayList<>();
     int num;
+    int num_ = 0;
     Boolean isRide = false;
 
 
@@ -94,19 +95,21 @@ public class MainActivity extends AppCompatActivity {
         if (noCard) {
             usedListText.setVisibility(View.GONE);
         }
-        if(user!=null) {
+        if (user != null) {
             if (user.getCardIn()) {
                 usedListText.setVisibility(View.VISIBLE);
                 textView.setText("삭제하기");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    cardImgView.setBackground(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.cardimg)));
-                }
+                cardImgView.setBackgroundDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.cardimg)));
                 cardNumText.setText("" + user.getCardNum());
-            }
-        }else {
+            } else {
                 usedListText.setVisibility(View.GONE);
                 textView.setText("카드 추가하기");
-                cardImgView.setImageDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.no_card)));
+                cardImgView.setBackgroundDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.no_card)));
+            }
+        } else {
+            usedListText.setVisibility(View.GONE);
+            textView.setText("카드 추가하기");
+            cardImgView.setBackgroundDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.no_card)));
         }
 
         textView.setOnClickListener(new View.OnClickListener() {
@@ -122,11 +125,16 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, AddCardInfo.class);
                     startActivityForResult(intent, 333);
                 } else if (textView.getText().toString().equals("삭제하기")) {
-                    Call<User> access = NetworkHelper.getNetworkInstance().carddel(user.getFacebook_ID());
+                    user.setCardIn(false);
+                    user.setMoney(1000);
+                    user.setCardNum("");
+                    user.setCardName("");
+                    RideDatas.clear();
+                    String json = new Gson().toJson(user);
+                    Call<User> access = NetworkHelper.getNetworkInstance().cardInfo(json);
                     access.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
-
                         }
 
                         @Override
@@ -134,6 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                     });
+                    cardImgView.setBackgroundDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.no_card)));
+                    listAdapter.notifyDataSetChanged();
+                    saveNowData();
+                    cardNumText.setText(user.getCardNum());
+                    textView.setText("카드 추가하기");
                 }
             }
         });
@@ -173,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
                         listAdapter.notifyDataSetChanged();
                         saveNowData();
                     }
+                    num = 0;
                 }
             }
 
@@ -182,11 +196,11 @@ public class MainActivity extends AppCompatActivity {
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
                 receive = message;
-                if (user.getCardNum().equals("")) {
-                    num = 0;
-                } else if (num == 0) {
-                    if (user.getMoney()>=720) {
-                        int mymoney = user.getMoney();
+                int mymoney = user.getMoney();
+                if (user != null) {
+                    if (user.getCardNum().equals("")) {
+                        num = 0;
+                    } else if (num == 0 && user.getMoney() >= 720) {
                         user.setMoney(mymoney - 720);
                         RideDatas.add(new RideData(user.getMoney(), receive, "720"));
                         Toast.makeText(getApplicationContext(), "승차", Toast.LENGTH_SHORT).show();
@@ -196,8 +210,10 @@ public class MainActivity extends AppCompatActivity {
                             saveNowData();
                         }
                         num++;
-                    }else{
+                        num_ = 0;
+                    } else if (num_ == 0 && mymoney < 720 && !isRide) {
                         Toast.makeText(getApplicationContext(), "돈 부족 현재잔액 확인!!", Toast.LENGTH_SHORT).show();
+                        num_++;
                     }
                 }
 
@@ -215,15 +231,15 @@ public class MainActivity extends AppCompatActivity {
                 if (!user.getCardIn()) {
                     usedListText.setVisibility(View.GONE);
                     textView.setText("카드 추가하기");
+                    cardImgView.setBackgroundDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.no_card)));
+                    RideDatas.clear();
+                    listAdapter.notifyDataSetChanged();
+
                 } else {
-                    if (!user.getFacebook_ID().equals("")) {
-                        usedListText.setVisibility(View.VISIBLE);
-                        textView.setText("삭제하기");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            cardImgView.setBackground(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.cardimg)));
-                        }
-                        cardNumText.setText("" + user.getCardNum());
-                    }
+                    usedListText.setVisibility(View.VISIBLE);
+                    textView.setText("삭제하기");
+                    cardImgView.setBackgroundDrawable(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.cardimg)));
+                    cardNumText.setText("" + user.getCardNum());
                 }
                 break;
             case REQUEST_ENABLE_BT:
@@ -260,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         String json = new Gson().toJson(user);
         editor.putString("add_card_name", json);
         String json_ = new Gson().toJson(RideDatas);
-        editor.putString("RideData",json_);
+        editor.putString("RideData", json_);
         editor.apply();
     }
 
@@ -272,12 +288,13 @@ public class MainActivity extends AppCompatActivity {
         isLogin = pref.getBoolean("isLogin", false);
     }
 
-    void loadRideData(){
+    void loadRideData() {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         String ridedata_ = pref.getString("RideData", "");
         ArrayList<RideData> items_ = new ArrayList<>();
-        items_ = new Gson().fromJson(ridedata_, new TypeToken<ArrayList<RideData>>(){}.getType());
-        if(items_ != null) {
+        items_ = new Gson().fromJson(ridedata_, new TypeToken<ArrayList<RideData>>() {
+        }.getType());
+        if (items_ != null) {
             RideDatas.addAll(items_);
         }
     }

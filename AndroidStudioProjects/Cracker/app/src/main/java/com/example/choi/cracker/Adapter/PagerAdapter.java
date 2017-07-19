@@ -27,8 +27,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 return new FragmentOne();
             case 1:
                 return new FragmentTwo();
-            case 2:
-                return new FragmentThr();
             default:
                 return null;
         }
@@ -36,6 +34,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 }

@@ -68,7 +68,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 int a = viewPager.getCurrentItem();
-                if (a!=2){
+                if (a!=1){
                     viewPager.setCurrentItem(++a);
                 }else {
                     startActivity(new Intent(GuideActivity.this,MainActivity.class));
